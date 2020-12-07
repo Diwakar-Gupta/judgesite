@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { Button, Jumbotron, Accordion, ListGroup, Card } from "react-bootstrap";
+import Loading from './loading';
 
 export default class Course extends Component {
   state = {
@@ -31,22 +33,52 @@ export default class Course extends Component {
       .catch(console.log);
   }
 
-  renderCourse = (course) => {
-    return <div className='topic' key={course.key}>course.name</div>;
+  renderCourse = (topic, ind) => {
+    ind++;
+    return (
+      <Card key={topic.ind}>
+        <Card.Header>
+          <Accordion.Toggle as={Button} variant eventKey={ind}>
+            {topic.name}
+          </Accordion.Toggle>
+        </Card.Header>
+        <Accordion.Collapse eventKey={ind}>
+          <Card.Body>
+            <ListGroup variant="flush">
+              {topic.subtopics.map((subtopic) => (
+                <ListGroup.Item key={subtopic.id}
+                  to={`/course/${this.state.course.id}/${subtopic.id}`}
+                  as={Link}
+                >
+                  {subtopic.name}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </Card.Body>
+        </Accordion.Collapse>
+      </Card>
+    );
   };
 
   render() {
+    const { course } = this.state;
     return (
       <div>
-        <h4>Course page</h4>
         {this.state.loading ? (
-          <div>Loading....</div>
+          <div className='text-center'>
+            <Loading/>
+          </div>
         ) : (
           <div>
             {this.state.error ? (
               <div>Some thing went wrong</div>
             ) : (
-              <div className='course'>{this.state.course.topics.map(this.renderCourse)}</div>
+              <Jumbotron>
+                <h3 className="text-center">{course.name}</h3>
+                <Accordion defaultActiveKey="0">
+                  {this.state.course.topics.map( (topic, ind)=>this.renderCourse(topic, ind))}
+                </Accordion>
+              </Jumbotron>
             )}
           </div>
         )}
