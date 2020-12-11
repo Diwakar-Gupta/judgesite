@@ -8,8 +8,8 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 export default class Header extends Component {
   render() {
     return (
-      <Navbar collapseOnSelect expand="md" bg="dark" variant="dark">
-        <Navbar.Brand href="/">React-Bootstrap</Navbar.Brand>
+      <Navbar collapseOnSelect /* sticky="top" */ expand="md" bg="dark" variant="dark">
+        <Navbar.Brand as={NavLink} to='/'>LetsCode</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">

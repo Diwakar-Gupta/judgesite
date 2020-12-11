@@ -4,7 +4,8 @@ import axios from "axios";
 import Loading from "../loading";
 import { Tabs, Tab, Container, Row, Col } from "react-bootstrap";
 import SideBar from "./sideBar";
-import ReactHtmlParser from 'react-html-parser';
+import RenderProblem from "./renderProblem";
+import Editor from "./editor";
 
 export default class ProblemView extends Component {
   state = {
@@ -36,8 +37,9 @@ export default class ProblemView extends Component {
     const problem = this.state.problem;
 
     if (problem.description) {
-      return <div>{ ReactHtmlParser(problem.description) }</div>
-      // return <div dangerouslySetInnerHTML={{ __html: this.htmlDecode(problem.description)}}></div>;
+      return (
+        <RenderProblem className="p-4" problembody={problem.description} />
+      );
     } else {
       const { courseid, subtopicid, code } = this.state;
       axios
@@ -68,30 +70,33 @@ export default class ProblemView extends Component {
     const problemname = this.state.problem.name;
     return (
       <Container>
-        <Row className="p-2 mb-3 bg-white">
+        <Row className="p-2 mb-3">
           <h3>
             <strong>{problemname}</strong>
           </h3>
         </Row>
         <Row>
-          <Col sm={9} className="shadow">
-            <Tabs
-              id="controlled-tab-example"
-              activeKey={page}
-              onSelect={(page) => this.moveToPage(page)}
-            >
-              <Tab eventKey="problem" title="Problem" className='bg-white'>
-                <this.renderProblem />
-              </Tab>
-              <Tab eventKey="submission" title="Submission">
-                <this.renderSubmission />
-              </Tab>
-              <Tab eventKey="contact" title="Contact">
-                <div>contact</div>
-              </Tab>
-            </Tabs>
+          <Col md={9}>
+            <Container className="shadow bg-white pt-3">
+              <Tabs
+                id="controlled-tab-example"
+                activeKey={page}
+                onSelect={(page) => this.moveToPage(page)}
+              >
+                <Tab eventKey="problem" title="Problem" className="">
+                  <this.renderProblem />
+                </Tab>
+                <Tab eventKey="submission" title="Submission" className="">
+                  <this.renderSubmission />
+                </Tab>
+                <Tab eventKey="contact" title="Contact">
+                  <div>contact</div>
+                </Tab>
+              </Tabs>
+            </Container>
+            <Editor className="shadow mt-5 mb-3" />
           </Col>
-          <Col sm={3}>
+          <Col md={3}>
             <SideBar />
           </Col>
         </Row>
