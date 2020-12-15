@@ -1,8 +1,13 @@
 import React, { Component } from "react";
-import axios from "axios";
+import axiosBase from "../../util/axiosWrapper";
 import { Link } from "react-router-dom";
-import { Button, Jumbotron, Accordion, ListGroup, Card } from "react-bootstrap";
-import Loading from './loading';
+import {
+  Jumbotron,
+  Accordion,
+  ListGroup,
+  Card,
+} from "react-bootstrap";
+import Loading from "./loading";
 
 export default class Course extends Component {
   state = {
@@ -14,8 +19,8 @@ export default class Course extends Component {
   };
 
   componentDidMount() {
-    axios
-      .get(`/apiv0/course/${this.state.course.id}`)
+    axiosBase
+      .get(`/apiv0/course/${this.state.course.id}/`)
       .then((res) => {
         console.log(res.data);
         this.setState({
@@ -37,16 +42,20 @@ export default class Course extends Component {
     ind++;
     return (
       <Card key={topic.ind}>
-        <Card.Header>
+        <Accordion.Toggle as={Card.Header} eventKey={ind}>
+          {topic.name}
+        </Accordion.Toggle>
+        {/* <Card.Header>
           <Accordion.Toggle as={Button} variant eventKey={ind}>
-            {topic.name}
+            
           </Accordion.Toggle>
-        </Card.Header>
+        </Card.Header> */}
         <Accordion.Collapse eventKey={ind}>
           <Card.Body>
             <ListGroup variant="flush">
               {topic.subtopics.map((subtopic) => (
-                <ListGroup.Item key={subtopic.id}
+                <ListGroup.Item
+                  key={subtopic.id}
                   to={`/course/${this.state.course.id}/${subtopic.id}`}
                   as={Link}
                 >
@@ -65,8 +74,8 @@ export default class Course extends Component {
     return (
       <div>
         {this.state.loading ? (
-          <div className='text-center'>
-            <Loading/>
+          <div className="text-center">
+            <Loading />
           </div>
         ) : (
           <div>
@@ -76,7 +85,9 @@ export default class Course extends Component {
               <Jumbotron>
                 <h3 className="text-center">{course.name}</h3>
                 <Accordion defaultActiveKey="0">
-                  {this.state.course.topics.map( (topic, ind)=>this.renderCourse(topic, ind))}
+                  {this.state.course.topics.map((topic, ind) =>
+                    this.renderCourse(topic, ind)
+                  )}
                 </Accordion>
               </Jumbotron>
             )}

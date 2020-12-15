@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
+import axiosBase from "../../util/axiosWrapper";
 import { Link } from "react-router-dom";
 import { Jumbotron, ListGroup } from "react-bootstrap";
 import Loading from './loading';
@@ -15,8 +15,8 @@ export default class CourseSubTopics extends Component {
   };
 
   componentDidMount() {
-    axios
-      .get(`/apiv0/course/${this.state.courseid}/${this.state.topic.id}`)
+    axiosBase
+      .get(`/apiv0/course/${this.state.courseid}/${this.state.topic.id}/`)
       .then((res) => {
         console.log(res.data);
         this.setState({

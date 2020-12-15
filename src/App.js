@@ -7,6 +7,7 @@ import Courses from "./components/presentation/courses";
 import Course from "./components/presentation/course";
 import CourseSubTopics from "./components/presentation/courseSubTopics";
 import Header from "./components/presentation/header";
+import SignInUp from './components/presentation/signInUp';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           ></Route>
 
           <Route path="/course/:courseid" component={Course}></Route>
+          <Route path='/auth' component={SignInUp}/>
           <Route path="/:problemcode" component={ProblemView}></Route>
           <Route path="/" component={Home}></Route>
         </Switch>

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import axios from "axios";
+import axiosBase from "../../util/axiosWrapper";
 import { Link } from "react-router-dom";
 import Loading from "./loading";
-import { Button, Container, Card } from "react-bootstrap";
+import { Button, Card, CardColumns } from "react-bootstrap";
 
 export default class Courses extends Component {
   state = {
@@ -12,8 +12,8 @@ export default class Courses extends Component {
   };
 
   componentDidMount() {
-    axios
-      .get("/apiv0/courses")
+    axiosBase
+      .get("/apiv0/courses/")
       .then((res) => {
         console.log(res.data);
         this.setState({
@@ -29,17 +29,14 @@ export default class Courses extends Component {
     return (
       <Card
         key={course.id}
-        className="m-2 f-3"
-        style={{
-          "max-width": "30rem",
-          "min-width": "20rem",
-          "max-height": "12rem",
-        }}
+        
       >
         <Card.Body>
           <Card.Title>{course.name}</Card.Title>
-          <Card.Text className='text-muted' style={{ overflow: "hidden", "height": "3rem",'font-size':'0.9rem', }}>
-            {course.description}
+          <Card.Text
+            className="text-muted"
+          >
+            {course.description.substring(0,100)}
           </Card.Text>
           <Button variant="primary" to={`/course/${course.id}`} as={Link}>
             Continue Course
@@ -57,7 +54,9 @@ export default class Courses extends Component {
             <Loading />
           </div>
         ) : (
-          <Container fluid className="d-flex" style={{ "flex-wrap": "wrap" }}>
+          
+
+          <CardColumns>
             {this.state.error ? (
               <div className="text-center">Error</div>
             ) : this.state.courses.length === 0 ? (
@@ -65,7 +64,7 @@ export default class Courses extends Component {
             ) : (
               this.state.courses.map(this.renderCourse)
             )}
-          </Container>
+          </CardColumns>
         )}
       </div>
     );

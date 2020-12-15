@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { Link } from "react-router-dom";
 
 export default class Home extends Component {
@@ -8,10 +8,10 @@ export default class Home extends Component {
   };
 
   componentDidMount() {
-    axios.get("/apiv0/problems").then((res) => {
-      console.log(res);
-      this.setState({ problems: res.data.problems });
-    });
+    // axios.get("/apiv0/problems").then((res) => {
+    //   console.log(res);
+    //   this.setState({ problems: res.data.problems });
+    // });
   }
 
   render() {

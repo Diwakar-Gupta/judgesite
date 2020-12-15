@@ -1,24 +1,30 @@
 import React, { Component } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Card,
-  Button,
-} from "react-bootstrap";
+import { Row, Col, Form, Card, Button } from "react-bootstrap";
 
 export default class Editor extends Component {
   state = {
-    language: "python3",
+    language: this.props.allowed_languages?.[0]?.key,
+    code: "",
+    allowed_languages: [],
   };
-  allowedLanguages = this.props.languages || [
-    "cpp",
-    "java8",
-    "java11",
-    "python2",
-    "python3",
-  ];
+
+  componentWillReceiveProps(nextProps) {
+    console.log('new props')
+    console.log(nextProps)
+    this.setState({ allowed_languages: nextProps.allowed_languages, language: this.state.language|| nextProps.allowed_languages?.[0]?.key });
+    // this.forceUpdate();
+  }
+
+  setCode = (event) => {
+    const code = event.target.value;
+    this.setState({
+      code,
+    });
+  };
+
+  submit = () => {
+    this.props.submitCode({ key: this.state.language, code: this.state.code });
+  };
 
   render() {
     return (
@@ -29,14 +35,18 @@ export default class Editor extends Component {
               <Col md={3}>
                 <Form.Control
                   as="select"
-                  onChange={(event) => {
-                    this.setState({ language: event.target.value });
+                  onChange={(valu) => {
+                    this.setState({ language: valu.target.value });
                   }}
-                  value={this.state.language || 'python3'}
+                  disabled={!this.props.allowed_languages.length ? true : false}
+                  value={this.state.language}
                 >
-                  {this.allowedLanguages.map((lan) => (
-                    <option key={lan}>{lan}</option>
-                  ))}
+                  {this.props.allowed_languages &&
+                    this.props.allowed_languages.map((lan, ind) => (
+                      <option value={lan.key} key={lan.key}>
+                        {lan.common_name}
+                      </option>
+                    ))}
                 </Form.Control>
               </Col>
             </Row>
@@ -46,15 +56,27 @@ export default class Editor extends Component {
               <Form.Label>
                 <Row></Row>
               </Form.Label>
-              <Form.Control as="textarea" rows={3} />
+              <Form.Control
+                disabled={!this.props.allowed_languages.length ? true : false}
+                as="textarea"
+                rows={20}
+                onChange={this.setCode}
+              />
             </Form.Group>
           </Card.Text>
         </Card.Body>
 
         <Card.Footer>
           <Row>
-            <Button variant="primary">Run</Button>
-            <Button variant="primary">Submit</Button>
+            <Col></Col>
+            <Col>
+              <Button variant="primary">Run</Button>
+            </Col>
+            <Col>
+              <Button variant="primary" onClick={this.submit}>
+                Submit
+              </Button>
+            </Col>
           </Row>
         </Card.Footer>
       </Card>

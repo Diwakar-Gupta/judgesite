@@ -3,17 +3,21 @@ import { Form, Button } from "react-bootstrap";
 
 export default class FileUpload extends Component {
   state = {
-    text: "",
-    language: "cpp",
+    language: this.props.allowed_languages?.[0]?.key,
+    code: "",
+    allowed_languages: [],
+    error: "",
   };
 
-  allowedLanguages = this.props.languages || [
-    "cpp",
-    "java8",
-    "java11",
-    "python2",
-    "python3",
-  ];
+  componentWillReceiveProps(nextProps) {
+    console.log("new props");
+    console.log(nextProps);
+    this.setState({
+      allowed_languages: nextProps.allowed_languages,
+      language: this.state.language || nextProps.allowed_languages?.[0]?.key,
+    });
+    // this.forceUpdate();
+  }
 
   onFileChange = (event) => {
     if (!event.target.files[0]) return;
@@ -22,18 +26,27 @@ export default class FileUpload extends Component {
     const text = file.text();
     text.then((value) => {
       this.setState({
-        text: value,
+        code: value,
       });
     });
   };
 
   handleSubmit = (event) => {
     event.preventdefault?.();
-    if(this.state.text.length===0)return;
-    console.log('submit problem');
-    console.log(this.state.text);
+    if (this.state.code.length === 0) {
+      this.setState({
+        error: "No code in the file",
+      });
+      return;
+    }
+    console.log("submit problem");
+    console.log(this.state.code);
     console.log(this.state.language);
-    
+
+    this.props.submitCode({
+      key: this.state.language,
+      code: this.state.code,
+    });
   };
 
   render() {
@@ -47,8 +60,10 @@ export default class FileUpload extends Component {
               this.setState({ language: event.target.value });
             }}
           >
-            {this.allowedLanguages.map((lan) => (
-              <option key={lan}>{lan}</option>
+            {this.state.allowed_languages.map((lan) => (
+              <option key={lan.key} value={lan.key}>
+                {lan.common_name}
+              </option>
             ))}
           </Form.Control>
         </Form.Group>
@@ -60,8 +75,8 @@ export default class FileUpload extends Component {
         </Form.Group>
         <Button
           variant="primary"
-          disabled={this.state.text.length === 0}
-          onClick = {this.handleSubmit}
+          disabled={this.state.code.length === 0}
+          onClick={this.handleSubmit}
         >
           Submit
         </Button>
