@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/judgesite/static/css/main.cf7110be.chunk.css",
-    "main.js": "/judgesite/static/js/main.48837b55.chunk.js",
-    "main.js.map": "/judgesite/static/js/main.48837b55.chunk.js.map",
+    "main.js": "/judgesite/static/js/main.78f807c1.chunk.js",
+    "main.js.map": "/judgesite/static/js/main.78f807c1.chunk.js.map",
     "runtime-main.js": "/judgesite/static/js/runtime-main.eb355f56.js",
     "runtime-main.js.map": "/judgesite/static/js/runtime-main.eb355f56.js.map",
     "static/js/2.43979fdb.chunk.js": "/judgesite/static/js/2.43979fdb.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.eb355f56.js",
     "static/js/2.43979fdb.chunk.js",
     "static/css/main.cf7110be.chunk.css",
-    "static/js/main.48837b55.chunk.js"
+    "static/js/main.78f807c1.chunk.js"
   ]
 }
