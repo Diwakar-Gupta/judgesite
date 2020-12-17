@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import GoogleLogin from "react-google-login";
 import { connect } from "react-redux";
 import { Tabs, Tab, Col } from "react-bootstrap";
-import auth from "../../util/auth";
+import auth from "../../util/auth2";
+import Loading from "./loading";
+
 const Actions = require("../../reducers/actions");
 
 class SignInUp extends Component {
@@ -12,15 +14,14 @@ class SignInUp extends Component {
     password: "",
     oldpassword: "",
     newpassword: "",
-    page: "signup",
+    page: "signin",
+
+    loading: false,
+
+    changepassworderror: "",
     signinerror: "",
     signuperror: "",
-    changepassworderror: "",
   };
-
-  componentDidMount() {
-    auth.whoami();
-  }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
@@ -29,8 +30,24 @@ class SignInUp extends Component {
   }
 
   loginWithPassword = () => {
+    this.setState({ signinerror: "", loading: true });
     const { username, password } = this.state;
-    auth.loginWithUserNameAndPassword(username, password);
+    auth.loginWithUserNameAndPassword(
+      username,
+      password,
+      () => {
+        this.setState({ loading: false, signinerror: "" });
+        this.props.history.push('/')
+      },
+      (err) => {
+        if (err.response) {
+          this.setState({
+            signinerror: "Incorrect credentials",
+            loading: false,
+          });
+        }
+      }
+    );
   };
 
   setPassword = (event) => {
@@ -50,6 +67,10 @@ class SignInUp extends Component {
   renderSignUp = () => {
     return (
       <div className="p-3">
+        {this.state.signuperror && (
+          <div style={{ color: "red" }}>{this.state.signuperror}</div>
+        )}
+        {this.state.loading && <Loading />}
         <h3>Sign Up</h3>
         {/*<div className="form-group">
           <label>First name</label>
@@ -105,6 +126,9 @@ class SignInUp extends Component {
   renderSignIn = () => {
     return (
       <div className="p-3">
+        {this.state.signinerror && (
+          <div style={{ color: "red" }}>{this.state.signinerror}</div>
+        )}
         <h3>Sign In</h3>
 
         <div className="form-group">

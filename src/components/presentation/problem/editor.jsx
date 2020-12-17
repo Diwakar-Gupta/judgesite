@@ -8,11 +8,18 @@ export default class Editor extends Component {
     allowed_languages: [],
   };
 
-  componentWillReceiveProps(nextProps) {
-    console.log('new props')
-    console.log(nextProps)
-    this.setState({ allowed_languages: nextProps.allowed_languages, language: this.state.language|| nextProps.allowed_languages?.[0]?.key });
-    // this.forceUpdate();
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const nd = {};
+    if (
+      nextProps.allowed_languages &&
+      nextProps.allowed_languages !== prevState.allowed_languages
+    ) {
+      nd.allowed_languages = nextProps.allowed_languages;
+    }
+    if (nextProps.language && nextProps.language !== prevState.language) {
+      nd.language = prevState.language || nextProps.allowed_languages?.[0]?.key;
+    }
+    return nd;
   }
 
   setCode = (event) => {
@@ -23,7 +30,8 @@ export default class Editor extends Component {
   };
 
   submit = () => {
-    this.props.submitCode({ key: this.state.language, code: this.state.code });
+    const language = this.state.language || this.state.allowed_languages[0].key
+    this.props.submitCode({ key: language, code: this.state.code });
   };
 
   render() {

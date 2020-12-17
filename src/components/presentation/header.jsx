@@ -5,7 +5,7 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { connect } from "react-redux";
 import axios from "../../util/axiosWrapper";
-import auth from "../../util/auth";
+import auth from "../../util/auth2";
 import Actions from "../../reducers/actions";
 import '../../static/scss/header.scss'
 

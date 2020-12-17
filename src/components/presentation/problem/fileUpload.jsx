@@ -10,8 +10,6 @@ export default class FileUpload extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    console.log("new props");
-    console.log(nextProps);
     this.setState({
       allowed_languages: nextProps.allowed_languages,
       language: this.state.language || nextProps.allowed_languages?.[0]?.key,
@@ -43,8 +41,14 @@ export default class FileUpload extends Component {
     console.log(this.state.code);
     console.log(this.state.language);
 
+    if (!this.state.language) {
+      this.setState({
+        language: this.state.allowed_languages[0].key,
+      });
+    }
+    const language = this.state.language || this.state.allowed_languages[0].key
     this.props.submitCode({
-      key: this.state.language,
+      key: language,
       code: this.state.code,
     });
   };

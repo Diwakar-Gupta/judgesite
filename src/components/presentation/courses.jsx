@@ -22,7 +22,17 @@ export default class Courses extends Component {
           error: "",
         });
       })
-      .catch(console.log);
+      .catch( (err) => {
+        if(err.response){
+          if(err.response.status == 404){
+            this.setState({loading: false, error: 'Resourse not available'})
+          }else{
+            this.setState({loading: false, error: err.response.data})
+          }
+        }else{
+          this.setState({loading: false, error: err.message})
+        }
+      });
   }
 
   renderCourse = (course) => {
@@ -54,14 +64,13 @@ export default class Courses extends Component {
             <Loading />
           </div>
         ) : (
-          
-
           <CardColumns>
             {this.state.error ? (
-              <div className="text-center">Error</div>
+              <div className="text-center">{this.state.error}</div>
             ) : this.state.courses.length === 0 ? (
-              <div className="text-center">{"No Course"}</div>
+              <div className="text-center">{"No Course available for u"}</div>
             ) : (
+              this.state.courses.length == 0?( <div>No Course For U Now</div> ):
               this.state.courses.map(this.renderCourse)
             )}
           </CardColumns>

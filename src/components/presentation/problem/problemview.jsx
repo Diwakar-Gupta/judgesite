@@ -13,22 +13,28 @@ export default class ProblemView extends Component {
     code: this.props.match.params.problemcode,
     courseid: this.props.match.params.courseid,
     subtopicid: this.props.match.params.subtopicid,
+
     problem: {
       code: this.props.match.params.problemcode,
-      allowed_languages: [],
     },
+    allowed_languages: [],
+    problemloading: false,
+    errorProblem: "",
+
     submissions: [],
     currentSubmissions: null,
     subLoading: false,
+    suberror: "",
+
     page: this.props.match.params.page || "problem",
     error: "",
   };
 
-  componentDidMount() {
+  /* componentDidMount() {
     const { courseid, subtopicid, code } = this.state;
     this.setState({
-      subLoading:true
-    })
+      subLoading: true,
+    });
     axiosBase
       .get(`/apiv0/course/${courseid}/${subtopicid}/${code}/submission/2/`)
       .then((sub) => {
@@ -38,12 +44,18 @@ export default class ProblemView extends Component {
         });
       })
       .catch((err) => {
-        this.setState({
-          subLoading: false,
-        });
+        if (err.response) {
+          if (err.response.status == 404) {
+            this.setState({ subLoading: false, error: "Resourse not available" });
+          } else {
+            this.setState({ subLoading: false, error: err.response.data });
+          }
+        } else {
+          this.setState({ subLoading: false, error: err.message });
+        }
       });
   }
-
+*/
   moveToPage = (page) => {
     const { courseid, subtopicid, code } = this.state;
     this.props.history.push(
@@ -53,13 +65,14 @@ export default class ProblemView extends Component {
   };
 
   renderSubmission = () => {
-    const { submissions, currentSubmissions } = this.state;
+    const { submissions, currentSubmissions, suberror } = this.state;
     return (
       <div>
         <Submission
           subLoading={this.state.subLoading}
           currentSubmissions={currentSubmissions}
           submissions={submissions}
+          suberror={suberror}
         />
       </div>
     );
@@ -68,30 +81,61 @@ export default class ProblemView extends Component {
   submitCode = (packet) => {
     console.log(packet);
     const { courseid, subtopicid, code } = this.state;
+    this.setState({ subLoading: true });
+    this.moveToPage("submission");
     axiosBase
       .post(
         `/apiv0/course/${courseid}/${subtopicid}/${code}/submission/`,
         packet
       )
       .then((res) => {
-        console.log(res);
-        this.setState({ subLoading: true });
-        this.moveToPage("submission");
         const id = res.data;
         axiosBase
-          .get(
-            `/apiv0/course/${courseid}/${subtopicid}/${code}/submission/${id}/`
-          )
+          .get(`/apiv0/cachedsubmission/${id}/`)
           .then((sub) => {
             this.setState({
               currentSubmissions: sub.data,
               subLoading: false,
+              suberror: "",
             });
           })
           .catch((err) => {
+            if (err.response) {
+              if (err.response.status == 404) {
+                this.setState({
+                  subLoading: false,
+                  suberror: "Something not found in server",
+                });
+              } else {
+                this.setState({
+                  subLoading: false,
+                  suberror: err.response.data,
+                });
+              }
+            } else
+              this.setState({
+                subLoading: false,
+                suberror: err.message,
+              });
+          });
+      })
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.status == 404) {
             this.setState({
               subLoading: false,
+              suberror: "Something not found in server",
             });
+          } else {
+            this.setState({
+              subLoading: false,
+              suberror: err.response.data,
+            });
+          }
+        } else
+          this.setState({
+            subLoading: false,
+            suberror: err.message,
           });
       });
   };
@@ -104,23 +148,45 @@ export default class ProblemView extends Component {
         <RenderProblem className="p-4" problembody={problem.description} />
       );
     } else {
-      if (this.state.problem.error)
-        return <div className="text-center p-4">Error</div>;
+      if (this.state.errorProblem)
+        return <div className="text-center p-4">{this.state.errorProblem}</div>;
+      if (this.state.problemloading) {
+        return (
+          <div className="text-center">
+            <Loading />
+          </div>
+        );
+      }
 
       const { courseid, subtopicid, code } = this.state;
       axiosBase
         .get(`/apiv0/course/${courseid}/${subtopicid}/${code}/`)
         .then((res) => {
           console.log(res);
+          this.setState({ problemloading: true });
           this.setState({
             problem: res.data.problem,
+            allowed_languages: res.data.allowed_languages,
+            problemloading: false,
           });
         })
-        .catch((err) =>
-          this.setState({
-            problem: { ...problem, error: err },
-          })
-        );
+        .catch((err) => {
+          if (err.response) {
+            if (err.response.status == 404) {
+              this.setState({
+                problemloading: false,
+                errorProblem: "Resourse not available",
+              });
+            } else {
+              this.setState({
+                problemloading: false,
+                errorProblem: err.response.data,
+              });
+            }
+          } else {
+            this.setState({ problemloading: false, errorProblem: err.message });
+          }
+        });
 
       return (
         <div className="text-center p-4">
@@ -137,7 +203,9 @@ export default class ProblemView extends Component {
       <Container>
         <Row className="p-2 mb-3">
           <h3>
-            <strong>{problemname}</strong>
+            <strong>
+              {problemname} {this.state.error}
+            </strong>
           </h3>
         </Row>
         <Row>
@@ -153,18 +221,15 @@ export default class ProblemView extends Component {
                     <this.renderProblem />
                   </Container>
                 </Tab>
+                <Tab eventKey="editor" title="</>">
+                  <Editor
+                    allowed_languages={this.state.allowed_languages}
+                    submitCode={this.submitCode}
+                    className="mt-5 mb-3"
+                  />
+                </Tab>
                 <Tab eventKey="submission" title="Submission">
                   <this.renderSubmission />
-                </Tab>
-                <Tab eventKey="contact" title="Contact">
-                  <div>contact</div>
-                </Tab>
-                <Tab eventKey="editor" title="editor">
-                  <Editor
-                    allowed_languages={this.state.problem.allowed_languages}
-                    submitCode={this.submitCode}
-                    className="shadow mt-5 mb-3"
-                  />
                 </Tab>
               </Tabs>
             </Container>
@@ -172,7 +237,7 @@ export default class ProblemView extends Component {
           <Col md={3}>
             <SideBar
               submitCode={this.submitCode}
-              allowed_languages={this.state.problem.allowed_languages}
+              allowed_languages={this.state.allowed_languages}
             />
           </Col>
         </Row>

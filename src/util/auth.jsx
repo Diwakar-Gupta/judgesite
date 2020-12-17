@@ -29,9 +29,11 @@ const loginWithUserNameAndPassword = (username, password) => {
       username: username,
       password: password,
     })
-    .then(() => {
+    .then((res) => {
       whoami();
-    });
+    }).catch( (err) => {
+      console.log(err);
+    } )
 };
 
 const changePassword = (username, oldpassword, newpassword) => {
@@ -66,6 +68,5 @@ const auth = {
   withGoogleToken,
 };
 console.log('calling whoami');
-whoami();
 
 export default auth;

@@ -3,6 +3,9 @@ import axios from "axios";
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.withCredentials = true
+// axios.defaults.proxy.host='http://127.0.0.1:8000/';
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = 'http://codeclub.com/';
+// axios.defaults.baseURL = "http://codeclub.com/";
 axios.defaults.baseURL = "http://127.0.0.1:8000/";
 
 // function getCookie(name) {

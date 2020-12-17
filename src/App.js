@@ -8,6 +8,8 @@ import Course from "./components/presentation/course";
 import CourseSubTopics from "./components/presentation/courseSubTopics";
 import Header from "./components/presentation/header";
 import SignInUp from './components/presentation/signInUp';
+import auth from './util/auth'
+import Test from './test';
 
 function App() {
   return (
@@ -32,12 +34,15 @@ function App() {
 
           <Route path="/course/:courseid" component={Course}></Route>
           <Route path='/auth' component={SignInUp}/>
-          <Route path="/:problemcode" component={ProblemView}></Route>
+          <Route path='/test' component={Test}/>
+          <Route path="/judgesite" component={Home}></Route>
           <Route path="/" component={Home}></Route>
         </Switch>
       </div>
     </div>
   );
 }
+
+auth.whoami();
 
 export default App;

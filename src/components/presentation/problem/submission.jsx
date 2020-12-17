@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "../../../util/axiosWrapper";
 import { Container, Row, Col } from "react-bootstrap";
 import Loading from '../loading';
 
@@ -8,7 +7,8 @@ export default class Submission extends Component {
     id: this.props.id,
     currentSubmissions: this.props.currentSubmissions,
     submissions: this.props.submissions,
-    subLoading: this.props.subLoading
+    subLoading: this.props.subLoading,
+    suberror:''
   };
 
   
@@ -24,6 +24,9 @@ export default class Submission extends Component {
     if (nextProps.subLoading !== prevState.subLoading) {
       nd.subLoading = nextProps.subLoading;
     }
+    if (nextProps.suberror !== prevState.suberror) {
+      nd.suberror = nextProps.suberror;
+    }
     return nd;
   }
 
@@ -36,6 +39,8 @@ export default class Submission extends Component {
             <div>{currsub?.result}</div>
           )}
         </Col>
+        {this.state.suberror&&(<Col className='m-4 p-4'>{this.state.suberror}</Col>)}
+        
         <Col>
           {this.state.submissions.map( (sub) => {
             <div>{sub.result}</div>
